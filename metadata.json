@@ -1,0 +1,6 @@
+{
+  "name": "DigWeb Expert – Partner Portal",
+  "description": "Official Referral Partnership Registration and Information Portal for DigWeb Expert. Connect businesses with professional digital services.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
