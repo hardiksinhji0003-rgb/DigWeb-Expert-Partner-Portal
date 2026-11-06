@@ -222,7 +222,13 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate }) => {
               <label className="block text-xs font-semibold text-slate-900">
                 {t.register.instagram}
               </label>
-              <span className="text-[11px] text-slate-400">Accepts with or without @</span>
+              <span className="text-[11px] text-slate-400">
+                {language === 'gu'
+                  ? '@ સાથે અથવા વગર સ્વીકાર્ય'
+                  : language === 'hi'
+                  ? '@ के साथ या बिना स्वीकार्य'
+                  : 'Accepts with or without @'}
+              </span>
             </div>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -312,7 +318,13 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate }) => {
           {/* Automatic Activation Notice */}
           <div className="p-3 bg-emerald-50/70 border border-emerald-200/60 rounded-xl text-xs text-emerald-800 flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Instant Activation: Your Partner ID and dashboard access will be activated immediately without manual delays.</span>
+            <span>
+              {language === 'gu'
+                ? 'ત્વરિત સક્રિયકરણ: તમારો પાર્ટનર આઈડી અને ડેશબોર્ડ કોઈપણ વિલંબ વિના તાત્કાલિક સક્રિય થઈ જશે.'
+                : language === 'hi'
+                ? 'त्वरित सक्रियण: आपकी पार्टनर आईडी और डैशबोर्ड बिना किसी देरी के तुरंत सक्रिय हो जाएंगे।'
+                : 'Instant Activation: Your Partner ID and dashboard access will be activated immediately without manual delays.'}
+            </span>
           </div>
 
           {/* Submit Button */}

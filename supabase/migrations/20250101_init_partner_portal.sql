@@ -208,16 +208,40 @@ CREATE POLICY "Admin write resources" ON public.resources FOR ALL TO authenticat
 CREATE POLICY "Public read settings" ON public.app_settings FOR SELECT TO public USING (true);
 CREATE POLICY "Admin write settings" ON public.app_settings FOR ALL TO authenticated USING (public.is_admin(auth.uid()));
 
--- LEADS POLICIES
-CREATE POLICY "Partners can view own leads" ON public.leads
+-- 12. APPOINTMENTS TABLE (Consultation Bookings)
+CREATE TABLE IF NOT EXISTS public.appointments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_name TEXT NOT NULL,
+    client_email TEXT NOT NULL,
+    client_phone TEXT NOT NULL,
+    service_needed TEXT NOT NULL,
+    appointment_date DATE NOT NULL,
+    preferred_time TEXT NOT NULL,
+    notes TEXT,
+    partner_code TEXT,
+    partner_id UUID REFERENCES public.partners(id) ON DELETE SET NULL,
+    status TEXT DEFAULT 'Confirmed' CHECK (status IN ('Pending', 'Confirmed', 'Completed', 'Cancelled')),
+    created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_appointments_client_email ON public.appointments(client_email);
+CREATE INDEX IF NOT EXISTS idx_appointments_partner_id ON public.appointments(partner_id);
+
+ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public insert appointments" ON public.appointments
+    FOR INSERT TO public
+    WITH CHECK (true);
+
+CREATE POLICY "Allow partners to view own referred appointments" ON public.appointments
     FOR SELECT TO authenticated
-    USING (partner_id IN (SELECT id FROM public.partners WHERE user_id = auth.uid()) OR public.is_admin(auth.uid()));
+    USING (
+        partner_id IN (SELECT id FROM public.partners WHERE user_id = auth.uid()) 
+        OR public.is_admin(auth.uid())
+    );
 
-CREATE POLICY "Partners can insert leads" ON public.leads
-    FOR INSERT TO authenticated
-    WITH CHECK (partner_id IN (SELECT id FROM public.partners WHERE user_id = auth.uid()));
-
-CREATE POLICY "Admin can update leads" ON public.leads
+CREATE POLICY "Allow admins full access to appointments" ON public.appointments
     FOR ALL TO authenticated
     USING (public.is_admin(auth.uid()));
 

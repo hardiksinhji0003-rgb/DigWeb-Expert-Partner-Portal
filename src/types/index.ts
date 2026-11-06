@@ -1,4 +1,4 @@
-export type Language = 'en' | 'hi';
+export type Language = 'en' | 'gu' | 'hi';
 
 export interface Partner {
   id: string;
@@ -26,11 +26,14 @@ export interface ServiceItem {
   id: string;
   service_name: string;
   service_name_hi: string | null;
+  service_name_gu?: string | null;
   description: string;
   description_hi: string | null;
+  description_gu?: string | null;
   benefits: string[];
   commission_rules: string | null;
   commission_rules_hi: string | null;
+  commission_rules_gu?: string | null;
   display_order: number;
   is_active: boolean;
   created_at: string;
@@ -41,13 +44,16 @@ export interface OfferItem {
   id: string;
   title: string;
   title_hi: string | null;
+  title_gu?: string | null;
   description: string;
   description_hi: string | null;
+  description_gu?: string | null;
   service_id: string | null;
   commission_type: 'Percentage' | 'Fixed' | 'Custom';
   commission_value: string;
   terms: string | null;
   terms_hi: string | null;
+  terms_gu?: string | null;
   start_date: string | null;
   end_date: string | null;
   is_active: boolean;
@@ -59,9 +65,11 @@ export interface GuidelineItem {
   id: string;
   title: string;
   title_hi: string | null;
+  title_gu?: string | null;
   category: string;
   content: string;
   content_hi: string | null;
+  content_gu?: string | null;
   display_order: number;
   is_active: boolean;
   updated_at: string;
@@ -71,12 +79,14 @@ export interface ResourceItem {
   id: string;
   title: string;
   title_hi: string | null;
+  title_gu?: string | null;
   description: string | null;
   description_hi: string | null;
+  description_gu?: string | null;
   category: string;
   resource_url: string | null;
   content_body: string | null;
-  language: 'en' | 'hi' | 'both';
+  language: 'en' | 'gu' | 'hi' | 'both';
   is_active: boolean;
   created_at: string;
 }
@@ -102,3 +112,20 @@ export interface LeadItem {
   created_at: string;
   updated_at: string;
 }
+
+export interface AppointmentItem {
+  id: string;
+  client_name: string;
+  client_email: string;
+  client_phone: string;
+  service_needed: string;
+  appointment_date: string;
+  preferred_time: string;
+  notes?: string | null;
+  partner_code?: string | null;
+  partner_id?: string | null;
+  status: 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled';
+  created_at: string;
+  updated_at?: string;
+}
+

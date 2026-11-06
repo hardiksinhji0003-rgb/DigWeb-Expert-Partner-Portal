@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { DataService } from '../services/dataService';
-import { Partner, OfferItem, ServiceItem, GuidelineItem, ResourceItem, LeadItem } from '../types';
+import { Partner, OfferItem, ServiceItem, GuidelineItem, ResourceItem, LeadItem, AppointmentItem } from '../types';
 import { formatDateTimeIST } from '../utils/date';
 import {
   Shield,
@@ -22,6 +22,7 @@ import {
   Lock,
   ArrowRight,
   TrendingUp,
+  Calendar,
 } from 'lucide-react';
 
 interface AdminPageProps {
@@ -40,11 +41,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
 
   // Tab
   const [activeTab, setActiveTab] = useState<
-    'partners' | 'leads' | 'offers' | 'services' | 'guidelines' | 'resources' | 'settings'
+    'partners' | 'appointments' | 'leads' | 'offers' | 'services' | 'guidelines' | 'resources' | 'settings'
   >('partners');
 
   // Data
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentItem[]>([]);
   const [leads, setLeads] = useState<LeadItem[]>([]);
   const [offers, setOffers] = useState<OfferItem[]>([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
@@ -91,8 +93,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
   const [settingsSaved, setSettingsSaved] = useState(false);
 
   const loadAllAdminData = async () => {
-    const [pList, lList, oList, sList, gList, rList, sMap] = await Promise.all([
+    const [pList, aList, lList, oList, sList, gList, rList, sMap] = await Promise.all([
       DataService.getAllPartnersAdmin(),
+      DataService.getAllAppointmentsAdmin(),
       DataService.getAllLeadsAdmin(),
       DataService.getAllOffersAdmin(),
       DataService.getAllServicesAdmin(),
@@ -102,6 +105,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
     ]);
 
     setPartners(pList);
+    setAppointments(aList);
     setLeads(lList);
     setOffers(oList);
     setServices(sList);
@@ -551,6 +555,19 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
 
         <button
           type="button"
+          onClick={() => setActiveTab('appointments')}
+          className={`px-4 py-2 rounded-xl whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1.5 ${
+            activeTab === 'appointments'
+              ? 'bg-[#0B1630] text-white font-semibold'
+              : 'text-slate-600 hover:bg-slate-100'
+          }`}
+        >
+          <Calendar className="w-3.5 h-3.5 text-[#D4AF57]" />
+          <span>Appointments ({appointments.length})</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveTab('leads')}
           className={`px-4 py-2 rounded-xl whitespace-nowrap transition-colors cursor-pointer ${
             activeTab === 'leads'
@@ -746,6 +763,95 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
           </div>
         </div>
       )}
+ 
+       {/* TAB: APPOINTMENTS MANAGEMENT (Supabase Saved Bookings) */}
+       {activeTab === 'appointments' && (
+         <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs space-y-5">
+           <div className="flex items-center justify-between">
+             <div>
+               <h3 className="font-bold text-base text-[#0B1630]">Consultation Appointments</h3>
+               <p className="text-xs text-slate-500">
+                 Appointments booked by prospective clients and saved directly in your Supabase database.
+               </p>
+             </div>
+             <span className="text-xs text-slate-500 tabular-nums">
+               {appointments.length} Total Bookings
+             </span>
+           </div>
+
+           <div className="overflow-x-auto">
+             <table className="w-full text-left text-xs text-slate-600">
+               <thead className="bg-slate-50 text-[11px] font-semibold text-slate-700 uppercase border-y border-slate-200/80">
+                 <tr>
+                   <th className="py-2.5 px-3">Client</th>
+                   <th className="py-2.5 px-3">Service</th>
+                   <th className="py-2.5 px-3">Date & Slot</th>
+                   <th className="py-2.5 px-3">Partner Ref</th>
+                   <th className="py-2.5 px-3">Status</th>
+                   <th className="py-2.5 px-3 text-right">Notes</th>
+                 </tr>
+               </thead>
+               <tbody className="divide-y divide-slate-100">
+                 {appointments.length === 0 ? (
+                   <tr>
+                     <td colSpan={6} className="py-8 text-center text-slate-400">
+                       No consultation appointments recorded yet. New bookings from the website will appear here in real time.
+                     </td>
+                   </tr>
+                 ) : (
+                   appointments.map((apt) => (
+                     <tr key={apt.id} className="hover:bg-slate-50/70">
+                       <td className="py-3 px-3">
+                         <p className="font-semibold text-slate-900">{apt.client_name}</p>
+                         <p className="text-[11px] text-slate-500">
+                           {apt.client_email} · {apt.client_phone}
+                         </p>
+                       </td>
+                       <td className="py-3 px-3 text-slate-800 font-medium">
+                         {apt.service_needed}
+                       </td>
+                       <td className="py-3 px-3">
+                         <p className="font-semibold text-slate-900">{apt.appointment_date}</p>
+                         <p className="text-[11px] text-slate-500">{apt.preferred_time}</p>
+                       </td>
+                       <td className="py-3 px-3">
+                         {apt.partner_code ? (
+                           <span className="font-mono text-[#856318] font-bold bg-[#D4AF57]/15 px-2 py-0.5 rounded text-[11px]">
+                             {apt.partner_code}
+                           </span>
+                         ) : (
+                           <span className="text-slate-400">Direct</span>
+                         )}
+                       </td>
+                       <td className="py-3 px-3">
+                         <select
+                           value={apt.status}
+                           onChange={async (e) => {
+                             await DataService.updateAppointmentStatus(
+                               apt.id,
+                               e.target.value as AppointmentItem['status']
+                             );
+                             loadAllAdminData();
+                           }}
+                           className="text-xs px-2 py-1 rounded border border-slate-300 bg-white"
+                         >
+                           <option value="Confirmed">Confirmed</option>
+                           <option value="Pending">Pending</option>
+                           <option value="Completed">Completed</option>
+                           <option value="Cancelled">Cancelled</option>
+                         </select>
+                       </td>
+                       <td className="py-3 px-3 text-right text-[11px] text-slate-500 max-w-xs truncate">
+                         {apt.notes || '—'}
+                       </td>
+                     </tr>
+                   ))
+                 )}
+               </tbody>
+             </table>
+           </div>
+         </div>
+       )}
 
       {/* TAB 2: CLIENT LEADS MANAGEMENT */}
       {activeTab === 'leads' && (

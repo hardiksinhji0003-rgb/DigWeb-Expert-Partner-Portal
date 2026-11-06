@@ -17,7 +17,10 @@ import {
   Instagram,
   Sparkles,
   ChevronDown,
+  Calendar,
 } from 'lucide-react';
+import { BookAppointmentModal } from '../components/BookAppointmentModal';
+import heroImage from '../assets/images/hero_corporate_partnership_1793639600789.jpg';
 
 interface HomePageProps {
   onNavigate: (path: string) => void;
@@ -29,6 +32,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const [offers, setOffers] = useState<OfferItem[]>([]);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
 
   useEffect(() => {
     DataService.getServices().then(setServices);
@@ -64,6 +68,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
   return (
     <div className="space-y-20 sm:space-y-28 pb-16">
+      <BookAppointmentModal
+        isOpen={appointmentModalOpen}
+        onClose={() => setAppointmentModalOpen(false)}
+      />
       {/* 1. HERO SECTION */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#0B1630] via-[#0E1E42] to-[#0B1630] text-white pt-16 sm:pt-20 pb-20 sm:pb-28 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -83,8 +91,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 {t.hero.subheading}
               </p>
 
-              {/* Two Primary CTAs */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
+              {/* Primary CTAs */}
+              <div className="flex flex-wrap items-center gap-3.5 pt-2">
                 <button
                   type="button"
                   onClick={() => onNavigate('/register')}
@@ -96,8 +104,23 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
                 <button
                   type="button"
+                  onClick={() => setAppointmentModalOpen(true)}
+                  className="px-5 py-3.5 text-sm sm:text-base font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow-lg transition-all active:scale-[0.99] flex items-center gap-2 cursor-pointer"
+                >
+                  <Calendar className="w-4 h-4 text-emerald-200" />
+                  <span>
+                    {language === 'gu'
+                      ? 'એપોઇન્ટમેન્ટ બુક કરો'
+                      : language === 'hi'
+                      ? 'अपॉइंटमेंट बुक करें'
+                      : 'Book Consultation'}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => onNavigate('/login')}
-                  className="px-6 py-3.5 text-sm sm:text-base font-semibold text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all cursor-pointer"
+                  className="px-5 py-3.5 text-sm sm:text-base font-semibold text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all cursor-pointer"
                 >
                   {t.hero.loginBtn}
                 </button>
@@ -124,7 +147,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             <div className="lg:col-span-5">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-700/70 aspect-[16/10] bg-slate-900">
                 <img
-                  src="/src/assets/images/hero_corporate_partnership_1793639600789.jpg"
+                  src={heroImage}
                   alt="DigWeb Expert Corporate Partnership"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
@@ -234,9 +257,24 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {services.map((service, idx) => {
-            const title = language === 'hi' && service.service_name_hi ? service.service_name_hi : service.service_name;
-            const desc = language === 'hi' && service.description_hi ? service.description_hi : service.description;
-            const commRules = language === 'hi' && service.commission_rules_hi ? service.commission_rules_hi : service.commission_rules;
+            const title =
+              language === 'gu' && service.service_name_gu
+                ? service.service_name_gu
+                : language === 'hi' && service.service_name_hi
+                ? service.service_name_hi
+                : service.service_name;
+            const desc =
+              language === 'gu' && service.description_gu
+                ? service.description_gu
+                : language === 'hi' && service.description_hi
+                ? service.description_hi
+                : service.description;
+            const commRules =
+              language === 'gu' && service.commission_rules_gu
+                ? service.commission_rules_gu
+                : language === 'hi' && service.commission_rules_hi
+                ? service.commission_rules_hi
+                : service.commission_rules;
 
             return (
               <div
@@ -323,9 +361,24 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {offers.map((offer) => {
-                const title = language === 'hi' && offer.title_hi ? offer.title_hi : offer.title;
-                const desc = language === 'hi' && offer.description_hi ? offer.description_hi : offer.description;
-                const terms = language === 'hi' && offer.terms_hi ? offer.terms_hi : offer.terms;
+                const title =
+                  language === 'gu' && offer.title_gu
+                    ? offer.title_gu
+                    : language === 'hi' && offer.title_hi
+                    ? offer.title_hi
+                    : offer.title;
+                const desc =
+                  language === 'gu' && offer.description_gu
+                    ? offer.description_gu
+                    : language === 'hi' && offer.description_hi
+                    ? offer.description_hi
+                    : offer.description;
+                const terms =
+                  language === 'gu' && offer.terms_gu
+                    ? offer.terms_gu
+                    : language === 'hi' && offer.terms_hi
+                    ? offer.terms_hi
+                    : offer.terms;
 
                 return (
                   <div
@@ -542,10 +595,18 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8 space-y-4">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                Ready to Join DigWeb Expert Referral Program?
+                {language === 'gu'
+                  ? 'ડિગવેબ એક્સપર્ટ રેફરલ પ્રોગ્રામમાં જોડાવા તૈયાર છો?'
+                  : language === 'hi'
+                  ? 'डिगवेब एक्सपर्ट रेफरल प्रोग्राम में शामिल होने के लिए तैयार हैं?'
+                  : 'Ready to Join DigWeb Expert Referral Program?'}
               </h2>
               <p className="text-slate-300 text-sm sm:text-base max-w-xl">
-                Register as an official partner in 2 minutes. Get your unique Partner ID, access marketing scripts, and submit client referrals.
+                {language === 'gu'
+                  ? '૨ મિનિટમાં સત્તાવાર પાર્ટનર તરીકે નોંધણી કરો. તમારો યુનિક પાર્ટનર આઈડી મેળવો, માર્કેટિંગ સ્ક્રિપ્ટ્સ એક્સેસ કરો અને ક્લાયન્ટ રેફરલ્સ સબમિટ કરો.'
+                  : language === 'hi'
+                  ? '2 मिनट में आधिकारिक पार्टनर के रूप में पंजीकरण करें। अपना अनूठा पार्टनर आईडी प्राप्त करें, मार्केटिंग स्क्रिप्ट एक्सेस करें और क्लाइंट रेफरल सबमिट करें।'
+                  : 'Register as an official partner in 2 minutes. Get your unique Partner ID, access marketing scripts, and submit client referrals.'}
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
@@ -572,7 +633,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             {/* Quick Contact Card */}
             <div className="lg:col-span-4 bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-3 text-xs">
               <div className="font-semibold text-[#D4AF57] pb-2 border-b border-slate-800">
-                Direct Partner Desk
+                {language === 'gu' ? 'ડાયરેક્ટ પાર્ટનર ડેસ્ક' : language === 'hi' ? 'डायरेक्ट पार्टनर डेस्क' : 'Direct Partner Desk'}
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <MessageSquare className="w-3.5 h-3.5 text-emerald-400 shrink-0" />

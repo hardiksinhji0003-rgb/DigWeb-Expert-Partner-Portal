@@ -7,6 +7,7 @@ import {
   ResourceItem,
   AppSetting,
   LeadItem,
+  AppointmentItem,
   Language,
 } from '../types';
 
@@ -234,6 +235,7 @@ const STORAGE_KEYS = {
   RESOURCES: 'dwe_portal_resources_db',
   SETTINGS: 'dwe_portal_settings_db',
   LEADS: 'dwe_portal_leads_db',
+  APPOINTMENTS: 'dwe_portal_appointments_db',
   ADMIN_USERS: 'dwe_portal_admin_users_db',
 };
 
@@ -839,6 +841,115 @@ export const DataService = {
       }
       leads[idx].updated_at = new Date().toISOString();
       setLocal(STORAGE_KEYS.LEADS, leads);
+      return true;
+    }
+    return false;
+  },
+
+  // Appointments Management (Direct Booking & Consultation Storage)
+  async bookAppointment(appointment: {
+    client_name: string;
+    client_email: string;
+    client_phone: string;
+    service_needed: string;
+    appointment_date: string;
+    preferred_time: string;
+    notes?: string | null;
+    partner_code?: string | null;
+    partner_id?: string | null;
+  }): Promise<{ success: boolean; data?: AppointmentItem; error?: string }> {
+    const item: AppointmentItem = {
+      id: `apt-${Date.now()}`,
+      client_name: appointment.client_name.trim(),
+      client_email: appointment.client_email.trim().toLowerCase(),
+      client_phone: appointment.client_phone.trim(),
+      service_needed: appointment.service_needed,
+      appointment_date: appointment.appointment_date,
+      preferred_time: appointment.preferred_time,
+      notes: appointment.notes?.trim() || null,
+      partner_code: appointment.partner_code?.trim() || null,
+      partner_id: appointment.partner_id || null,
+      status: 'Confirmed',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .insert({
+            client_name: item.client_name,
+            client_email: item.client_email,
+            client_phone: item.client_phone,
+            service_needed: item.service_needed,
+            appointment_date: item.appointment_date,
+            preferred_time: item.preferred_time,
+            notes: item.notes,
+            partner_code: item.partner_code,
+            partner_id: item.partner_id,
+            status: item.status,
+          })
+          .select()
+          .single();
+
+        if (!error && data) {
+          const list = getLocal<AppointmentItem[]>(STORAGE_KEYS.APPOINTMENTS, []);
+          list.unshift(data as AppointmentItem);
+          setLocal(STORAGE_KEYS.APPOINTMENTS, list);
+          return { success: true, data: data as AppointmentItem };
+        } else if (error) {
+          console.warn('Supabase appointments insert warning:', error);
+          // If table not created in user db yet, fallback locally so user never gets blocked
+        }
+      } catch (err: unknown) {
+        console.warn('Supabase bookAppointment error:', err);
+      }
+    }
+
+    const list = getLocal<AppointmentItem[]>(STORAGE_KEYS.APPOINTMENTS, []);
+    list.unshift(item);
+    setLocal(STORAGE_KEYS.APPOINTMENTS, list);
+    return { success: true, data: item };
+  },
+
+  async getAllAppointmentsAdmin(): Promise<AppointmentItem[]> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (!error && data) return data as AppointmentItem[];
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+    return getLocal<AppointmentItem[]>(STORAGE_KEYS.APPOINTMENTS, []);
+  },
+
+  async updateAppointmentStatus(
+    appointmentId: string,
+    status: AppointmentItem['status']
+  ): Promise<boolean> {
+    if (isSupabaseConfigured()) {
+      try {
+        const { error } = await supabase
+          .from('appointments')
+          .update({ status, updated_at: new Date().toISOString() })
+          .eq('id', appointmentId);
+        if (!error) return true;
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+
+    const list = getLocal<AppointmentItem[]>(STORAGE_KEYS.APPOINTMENTS, []);
+    const idx = list.findIndex((a) => a.id === appointmentId);
+    if (idx >= 0) {
+      list[idx].status = status;
+      list[idx].updated_at = new Date().toISOString();
+      setLocal(STORAGE_KEYS.APPOINTMENTS, list);
       return true;
     }
     return false;

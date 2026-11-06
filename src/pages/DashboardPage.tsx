@@ -585,9 +585,24 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           {/* Services List */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {services.map((s, idx) => {
-              const title = language === 'hi' && s.service_name_hi ? s.service_name_hi : s.service_name;
-              const desc = language === 'hi' && s.description_hi ? s.description_hi : s.description;
-              const rule = language === 'hi' && s.commission_rules_hi ? s.commission_rules_hi : s.commission_rules;
+              const title =
+                language === 'gu' && s.service_name_gu
+                  ? s.service_name_gu
+                  : language === 'hi' && s.service_name_hi
+                  ? s.service_name_hi
+                  : s.service_name;
+              const desc =
+                language === 'gu' && s.description_gu
+                  ? s.description_gu
+                  : language === 'hi' && s.description_hi
+                  ? s.description_hi
+                  : s.description;
+              const rule =
+                language === 'gu' && s.commission_rules_gu
+                  ? s.commission_rules_gu
+                  : language === 'hi' && s.commission_rules_hi
+                  ? s.commission_rules_hi
+                  : s.commission_rules;
 
               return (
                 <div key={s.id} className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs space-y-3">
@@ -598,7 +613,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                   <p className="text-xs text-slate-600 leading-relaxed">{desc}</p>
                   {rule && (
                     <div className="p-3 bg-slate-50 rounded-xl text-xs text-slate-700 border border-slate-200/60">
-                      <span className="font-semibold text-[#0B1630]">Commission Rule: </span>
+                      <span className="font-semibold text-[#0B1630]">
+                        {language === 'gu' ? 'કમિશન નિયમ: ' : language === 'hi' ? 'कमीशन नियम: ' : 'Commission Rule: '}
+                      </span>
                       {rule}
                     </div>
                   )}
@@ -615,9 +632,24 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {offers.map((off) => {
-                const title = language === 'hi' && off.title_hi ? off.title_hi : off.title;
-                const desc = language === 'hi' && off.description_hi ? off.description_hi : off.description;
-                const terms = language === 'hi' && off.terms_hi ? off.terms_hi : off.terms;
+                const title =
+                  language === 'gu' && off.title_gu
+                    ? off.title_gu
+                    : language === 'hi' && off.title_hi
+                    ? off.title_hi
+                    : off.title;
+                const desc =
+                  language === 'gu' && off.description_gu
+                    ? off.description_gu
+                    : language === 'hi' && off.description_hi
+                    ? off.description_hi
+                    : off.description;
+                const terms =
+                  language === 'gu' && off.terms_gu
+                    ? off.terms_gu
+                    : language === 'hi' && off.terms_hi
+                    ? off.terms_hi
+                    : off.terms;
 
                 return (
                   <div key={off.id} className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-2">
@@ -647,13 +679,29 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-10 shadow-xs space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <h2 className="text-xl font-bold text-[#0B1630]">{t.nav.guidelines}</h2>
-            <p className="text-xs text-slate-500 mt-1">Official partnership code of ethics and rules of engagement.</p>
+            <p className="text-xs text-slate-500 mt-1">
+              {language === 'gu'
+                ? 'સત્તાવાર પાર્ટનરશીપ આચારસંહિતા અને નિયમો.'
+                : language === 'hi'
+                ? 'आधिकारिक साझेदारी आचार संहिता और नियम।'
+                : 'Official partnership code of ethics and rules of engagement.'}
+            </p>
           </div>
 
           <div className="space-y-4">
             {guidelines.map((g) => {
-              const title = language === 'hi' && g.title_hi ? g.title_hi : g.title;
-              const content = language === 'hi' && g.content_hi ? g.content_hi : g.content;
+              const title =
+                language === 'gu' && g.title_gu
+                  ? g.title_gu
+                  : language === 'hi' && g.title_hi
+                  ? g.title_hi
+                  : g.title;
+              const content =
+                language === 'gu' && g.content_gu
+                  ? g.content_gu
+                  : language === 'hi' && g.content_hi
+                  ? g.content_hi
+                  : g.content;
 
               return (
                 <div key={g.id} className="p-5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-2">
@@ -677,13 +725,29 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 shadow-xs space-y-4">
             <div>
               <h2 className="text-xl font-bold text-[#0B1630]">{t.dashboard.tabs.resources}</h2>
-              <p className="text-xs text-slate-500 mt-1">Ready-to-use approved communication pitches and marketing text.</p>
+              <p className="text-xs text-slate-500 mt-1">
+                {language === 'gu'
+                  ? 'ક્લાયન્ટ્સ સાથે શેર કરવા માટે માન્ય માર્કેટિંગ પિચ અને મેસેજ ટેમ્પ્લેટ્સ.'
+                  : language === 'hi'
+                  ? 'ग्राहकों के साथ साझा करने के लिए स्वीकृत मार्केटिंग पिच और संदेश।'
+                  : 'Ready-to-use approved communication pitches and marketing text.'}
+              </p>
             </div>
 
             <div className="space-y-4 pt-2">
               {resources.map((res) => {
-                const title = language === 'hi' && res.title_hi ? res.title_hi : res.title;
-                const desc = language === 'hi' && res.description_hi ? res.description_hi : res.description;
+                const title =
+                  language === 'gu' && res.title_gu
+                    ? res.title_gu
+                    : language === 'hi' && res.title_hi
+                    ? res.title_hi
+                    : res.title;
+                const desc =
+                  language === 'gu' && res.description_gu
+                    ? res.description_gu
+                    : language === 'hi' && res.description_hi
+                    ? res.description_hi
+                    : res.description;
 
                 return (
                   <div key={res.id} className="p-5 border border-slate-200 rounded-xl space-y-3 bg-white hover:border-[#1D4ED8]/40 transition-colors">
@@ -700,7 +764,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                         <button
                           type="button"
                           onClick={() => handleCopyText(res.content_body || '', res.id)}
-                          className="self-start sm:self-auto px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#0B1630] hover:bg-[#102A56] text-white flex items-center gap-1.5 transition-all"
+                          className="self-start sm:self-auto px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#0B1630] hover:bg-[#102A56] text-white flex items-center gap-1.5 transition-all cursor-pointer"
                         >
                           {copiedId === res.id ? (
                             <>

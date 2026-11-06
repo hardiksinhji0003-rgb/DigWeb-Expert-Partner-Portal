@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
-import { Menu, X, Globe, User, LogOut, Shield } from 'lucide-react';
+import { Menu, X, User, LogOut, Shield, Calendar } from 'lucide-react';
+import { BookAppointmentModal } from './BookAppointmentModal';
+import { LanguageSelector } from './LanguageSelector';
 
 interface NavbarProps {
   currentPath: string;
@@ -9,13 +11,10 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, t } = useLanguage();
   const { user, partner, isAdmin, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'hi' : 'en');
-  };
+  const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
 
   const handleNavClick = (path: string) => {
     setMobileMenuOpen(false);
@@ -23,6 +22,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
   };
 
   return (
+    <>
+      <BookAppointmentModal
+        isOpen={appointmentModalOpen}
+        onClose={() => setAppointmentModalOpen(false)}
+        defaultPartnerCode={partner?.partner_code || null}
+      />
     <header className="sticky top-0 z-40 w-full bg-[#0B1630] text-white border-b border-slate-800 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-8 h-17">
@@ -88,15 +93,23 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
 
           {/* Zone 3: Language selector + Primary Actions */}
           <div className="hidden sm:flex items-center gap-3 shrink-0">
-            {/* Language Toggle */}
+            {/* Language Selector Dropdown */}
+            <LanguageSelector variant="header" />
+
+            {/* Book Appointment CTA */}
             <button
               type="button"
-              onClick={toggleLanguage}
-              aria-label="Toggle Language"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors whitespace-nowrap shrink-0"
+              onClick={() => setAppointmentModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600/90 hover:bg-emerald-600 text-white transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
             >
-              <Globe className="w-3.5 h-3.5 text-[#D4AF57]" />
-              <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
+              <Calendar className="w-3.5 h-3.5" />
+              <span>
+                {language === 'gu'
+                  ? 'એપોઇન્ટમેન્ટ બુક કરો'
+                  : language === 'hi'
+                  ? 'अपॉइंटमेंट बुक करें'
+                  : 'Book Appointment'}
+              </span>
             </button>
 
             {user ? (
@@ -156,13 +169,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
 
           {/* Mobile menu trigger */}
           <div className="flex sm:hidden items-center gap-2">
-            <button
-              type="button"
-              onClick={toggleLanguage}
-              className="p-1.5 text-xs font-semibold rounded bg-slate-800 text-slate-200"
-            >
-              {language === 'en' ? 'हिन्दी' : 'EN'}
-            </button>
+            <LanguageSelector variant="header" />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -178,6 +185,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-slate-800 bg-[#0B1630] px-4 py-4 space-y-3">
+          {/* Mobile Language Selector */}
+          <div className="pb-3 border-b border-slate-800">
+            <LanguageSelector
+              variant="mobile"
+              onLanguageChange={() => {
+                // Keep open or update seamlessly
+              }}
+            />
+          </div>
+
           <nav className="flex flex-col space-y-2 text-sm font-medium text-slate-300">
             <button
               type="button"
@@ -262,11 +279,29 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
                 >
                   {t.nav.login}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setAppointmentModalOpen(true);
+                  }}
+                  className="w-full py-2.5 text-center text-xs font-semibold text-white bg-emerald-600 rounded-lg flex items-center justify-center gap-2"
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>
+                    {language === 'gu'
+                      ? 'એપોઇન્ટમેન્ટ બુક કરો'
+                      : language === 'hi'
+                      ? 'अपॉइंटमेंट बुक करें'
+                      : 'Book Appointment'}
+                  </span>
+                </button>
               </>
             )}
           </div>
         </div>
       )}
     </header>
+    </>
   );
 };

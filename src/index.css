@@ -7,6 +7,9 @@
   :lang(hi) {
     font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif;
   }
+  :lang(gu) {
+    font-family: 'Noto Sans Gujarati', 'Plus Jakarta Sans', sans-serif;
+  }
 }
 
 /* Custom scrollbar */

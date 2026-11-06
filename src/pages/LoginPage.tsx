@@ -8,7 +8,7 @@ interface LoginPageProps {
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const { login, resetPassword } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -31,7 +31,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
     setErrorMessage(null);
 
     if (!email.trim() || !password) {
-      setErrorMessage('Please enter both your email address and password.');
+      setErrorMessage(
+        language === 'gu'
+          ? 'કૃપા કરીને તમારું ઇમેઇલ અને પાસવર્ડ બંને દાખલ કરો.'
+          : language === 'hi'
+          ? 'कृपया अपना ईमेल और पासवर्ड दोनों दर्ज करें।'
+          : 'Please enter both your email address and password.'
+      );
       return;
     }
 

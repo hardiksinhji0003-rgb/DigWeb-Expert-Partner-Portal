@@ -85,11 +85,17 @@ This application enables business promoters, Instagram influencers, local busine
 Create a `.env` file locally, or configure in Netlify **Site configuration → Environment variables**:
 
 ```bash
-VITE_SUPABASE_URL="https://your-project.supabase.co"
-VITE_SUPABASE_ANON_KEY="your-anon-public-key"
+VITE_SUPABASE_URL="https://serajsiipltxvjkmfkoe.supabase.co"
+VITE_SUPABASE_ANON_KEY="sb_publishable__B_E1eJvKa14L3co2VaUBg_MCb6J3NB"
 ```
 
-*Note: Never expose the Supabase `service_role` secret key in the frontend environment.*
+*Note: The application has been configured with your project credentials (`serajsiipltxvjkmfkoe`) as the default connection and supports custom overrides through Netlify Environment Variables. Never expose the Supabase `service_role` secret key in the frontend environment.*
+
+---
+
+## 4.1 Appointment Booking & Storage
+Consultation appointments booked by clients or referred by partners are recorded in the `appointments` table in your Supabase database (`serajsiipltxvjkmfkoe`). You can review, search, and update appointment statuses (Confirmed, Completed, Cancelled) directly from the **Admin Console** under the **Appointments** tab or directly in the Supabase Table Editor.
+
 
 ---
 

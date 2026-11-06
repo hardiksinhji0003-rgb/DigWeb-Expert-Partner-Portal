@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Language } from '../types';
-import { translations } from '../translations';
+import { translations, TranslationContent } from '../translations';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: typeof translations.en;
+  t: TranslationContent;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -13,8 +13,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('dwe_portal_lang');
-    if (saved === 'hi' || saved === 'en') {
-      return saved;
+    if (saved === 'hi' || saved === 'gu' || saved === 'en') {
+      return saved as Language;
     }
     return 'en';
   });
